@@ -17,7 +17,7 @@ function App() {
         <div>
           <Router>
             <Navbar />
-            <Alert />
+            <Alert message="This is Soni's property" />
             <div className="container">
             <Routes>
               <Route path="/" element={<Home/>} />
