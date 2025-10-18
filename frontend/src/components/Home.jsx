@@ -1,6 +1,10 @@
-import React from 'react'
+import React, {useContext} from 'react'
+import noteContext from '../context/notes/noteContext'
+import Notes from './Notes';
 
 const Home = () => {
+  const context = React.useContext(noteContext);
+  const { notes, setNotes } = context;
   return (
     <div>
       <div className="container my-3">
@@ -18,20 +22,7 @@ const Home = () => {
         </form>
       </div>
 
-      <div className="container">
-        <h2>Your Notes</h2>
-        <div className="row my-3">
-          <div className="col-md-3">
-            <div className="card" style={{width: "18rem"}}>
-              <div className="card-body">
-                <h5 className="card-title">Note Title</h5>
-                <p className="card-text">Note Description</p>
-                <a href="#" className="btn btn-primary">Edit Note</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Notes />
     </div>
   )
 }
