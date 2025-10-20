@@ -23,6 +23,17 @@ const noteState = (props) => {
 
   //Add a note
   const addNote = async (title, description, tag) => {
+    const duplicate = notes.find(
+      (note) =>
+        note.title.trim().toLowerCase() === title.trim().toLowerCase() &&
+        note.description.trim().toLowerCase() === description.trim().toLowerCase()
+    );
+
+    if (duplicate) {
+      alert("⚠️ Note with the same title and description already exists!");
+      return;
+    }
+
     const reapose = await fetch(`${host}/api/notes/addnote`, {
       method: "POST",
       headers: {
@@ -32,19 +43,10 @@ const noteState = (props) => {
       body: JSON.stringify({ title, description, tag }),
     });
 
-    const json = await reapose.json();
+    const newnote = await reapose.json();
 
     console.log("Adding a new note");
-    const note = {
-      _id: "6828b152732be7d352860261",
-      user: "682624c4a8cc02362c0ab465d",
-      title: title,
-      description: description,
-      tag: tag,
-      createdAt: "2025-05-17T15:54:58.405Z",
-      __v: 0,
-    };
-    setNotes(notes.concat(note));
+    setNotes(notes.concat(newnote));
   };
 
   //Delete a note
@@ -78,18 +80,14 @@ const noteState = (props) => {
       body: JSON.stringify({ title, description, tag }),
     });
 
-    const json = await reapose.json();
-    
-    for (let index = 0; index < notes.length; index++) {
-      const element = array[index];
-      if (element._id === id) {
-        element.title = title;
-        element.description = description;
-        element.tag = tag;
-        break;
-      }
-    }
-    setNotes(notes);
+    const json  = await reapose.json();
+    console.log("Editing the note with id " + id);
+    // Use the note returned by backend
+    const newNotes = notes.map((note) =>
+      note._id === id ? json.note : note
+    );
+
+    setNotes(newNotes);
   };
 
   return (
