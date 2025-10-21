@@ -10,16 +10,17 @@ const JWT_SECRET = 'your_jwt_secret_key_here';
 
 //Route:1 create a user using:POST /api/auth/createuser, no login required
 router.post(
-  '/creatuser',
+  '/createuser',
   [
     body('name', 'Enter a valid name').isLength({ min: 3 }),
     body('email', 'Enter a valid email').isEmail(),
     body('password', 'Password must be at least 5 characters long').isLength({ min: 5 }),
   ],
   async (req, res) => {
+    let success = false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({success, errors: errors.array() });
     }
 
     try {
@@ -27,7 +28,7 @@ router.post(
       const existingUser = await User.findOne({ email: req.body.email });
       console.log("name", req.body.name);
       if (existingUser) {
-        return res.status(400).json({ error: 'Email already exists' });
+        return res.status(400).json({ success, error: 'Email already exists' });
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -47,11 +48,11 @@ router.post(
       };
 
       const authToken = jwt.sign(data, JWT_SECRET);
-      
-      res.json({ authToken });
+      success = true;
+      res.json({ success, authToken });
     } catch (err) {
       console.error('Server error:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ success, error: 'Internal Server Error' });
     }
   }
 );
@@ -64,6 +65,8 @@ router.post(
     body('password', 'Password cannot be blank').exists(),
   ],
   async (req, res) => {
+    let success = false;
+    // if there are errors, return bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -80,7 +83,7 @@ router.post(
 
       const passwordCompare = await bcrypt.compare(password, user.password);
       if (!passwordCompare) {
-        return res.status(400).json({ error: 'Invalid credentials' });
+        return res.status(400).json({ success, error: 'Invalid credentials' });
       }
 
       const data = {
@@ -90,15 +93,9 @@ router.post(
       };
 
       const authToken = jwt.sign(data, JWT_SECRET);
+      success = true;
+      res.json({ success, authToken });
 
-      res.json({ authToken });
-
-      // Check if the password is correct
-      // if (user.password !== password) {
-      //   return res.status(400).json({ error: 'Invalid credentials' });
-      // }
-
-      // res.json({ message: 'Login successful', user });
     } catch (err) {
       console.error('Server error:', err);
       res.status(500).json({ error: 'Internal Server Error' });

@@ -6,7 +6,8 @@ import Alert from './components/Alert'
 import Home from './components/Home'
 import About from './components/About'
 import NoteState from './context/notes/noteState'
-
+import Login from './components/Login'
+import SignUp from './components/SignUp'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -22,6 +23,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Home/>} />
               <Route path="/about" element={<About/>} />
+              <Route path="/login" element={<Login/>} />
+              <Route path="/signup" element={<SignUp/>} />
             </Routes>
             </div>
           </Router>
