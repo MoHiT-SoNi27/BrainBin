@@ -10,7 +10,16 @@ import Login from './components/Login'
 import SignUp from './components/SignUp'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [alert, setAlert] = useState(null)
+  const showAlert = (message, type) =>{
+    setAlert({
+      msg: message,
+      type: type
+    })
+    setTimeout(() => {
+      setAlert(null);
+    }, 1500);
+  }
 
   return (
     <>
@@ -18,13 +27,13 @@ function App() {
         <div>
           <Router>
             <Navbar />
-            <Alert message="This is Soni's property" />
+            <Alert alert={alert}/>
             <div className="container">
             <Routes>
-              <Route path="/" element={<Home/>} />
+              <Route path="/" element={<Home showAlert={showAlert}/>} />
               <Route path="/about" element={<About/>} />
-              <Route path="/login" element={<Login/>} />
-              <Route path="/signup" element={<SignUp/>} />
+              <Route path="/login" element={<Login showAlert={showAlert}/>} />
+              <Route path="/signup" element={<SignUp showAlert={showAlert}/>} />
             </Routes>
             </div>
           </Router>
